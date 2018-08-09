@@ -10,6 +10,7 @@ using GameShop.DATA.EF;
 
 namespace GameShop.UI.MVC.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ProductsController : Controller
     {
         private GameShopEntities db = new GameShopEntities();

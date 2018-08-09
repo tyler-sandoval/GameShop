@@ -10,6 +10,7 @@ using GameShop.DATA.EF;
 
 namespace GameShop.UI.MVC.Controllers
 {
+    [Authorize]
     public class CategoriesController : Controller
     {
         private GameShopEntities db = new GameShopEntities();
