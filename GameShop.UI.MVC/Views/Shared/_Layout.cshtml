@@ -60,12 +60,12 @@
                     <div class="collapse navbar-collapse" id="site-nav-bar">
                         <ul class="nav navbar-nav">
                             <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                            <li>@Html.ActionLink("Products", "Index", "Products")</li>
                             <li>@Html.ActionLink("About", "About", "Home")</li>
                             <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
 
                             @if (Request.IsAuthenticated && User.IsInRole("Admin"))
                             {
-                                <li>@Html.ActionLink("Products", "Index", "Products")</li>
                                 <li>@Html.ActionLink("Categories", "Index", "Categories")</li>
                                 <li>@Html.ActionLink("Product Status", "Index", "ProductStatus")</li>
                                 <li>@Html.ActionLink("Product Categories", "Index", "ProductCategories")</li>
