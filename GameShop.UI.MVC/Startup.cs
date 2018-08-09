@@ -1,7 +1,5 @@
-﻿using Microsoft.Owin;
-using Owin;
+﻿using Owin;
 
-[assembly: OwinStartupAttribute(typeof(GameShop.UI.MVC.Startup))]
 namespace GameShop.UI.MVC
 {
     public partial class Startup

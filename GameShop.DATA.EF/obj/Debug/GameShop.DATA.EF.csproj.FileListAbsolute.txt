@@ -1,0 +1,5 @@
+C:\Users\Student\Documents\Visual Studio 2015\Projects\GameShop\src\GameShop.DATA.EF\bin\Debug\GameShop.DATA.EF.dll
+C:\Users\Student\Documents\Visual Studio 2015\Projects\GameShop\src\GameShop.DATA.EF\bin\Debug\GameShop.DATA.EF.pdb
+C:\Users\Student\Documents\Visual Studio 2015\Projects\GameShop\src\GameShop.DATA.EF\obj\Debug\GameShop.DATA.EF.csprojResolveAssemblyReference.cache
+C:\Users\Student\Documents\Visual Studio 2015\Projects\GameShop\src\GameShop.DATA.EF\obj\Debug\GameShop.DATA.EF.dll
+C:\Users\Student\Documents\Visual Studio 2015\Projects\GameShop\src\GameShop.DATA.EF\obj\Debug\GameShop.DATA.EF.pdb
