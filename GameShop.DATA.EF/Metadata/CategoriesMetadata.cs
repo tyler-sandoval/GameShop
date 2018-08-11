@@ -12,11 +12,11 @@ namespace GameShop.DATA.EF//.Metadata
         [Required(ErrorMessage = "* Required")]
         [StringLength(100, ErrorMessage = "* Category name cannot exceed 100 characters.")]
         [Display(Name = "Category")]
-        [DisplayFormat(ApplyFormatInEditMode = true)]
         public string CategoryName { get; set; }
 
         [UIHint("MultilineText")]
         [Display(Name = "Description")]
+        [DisplayFormat(NullDisplayText="N/A")]
         [StringLength(200, ErrorMessage = "* Category description cannot exceed 200 characters.")]
         public string CategoryDescription { get; set; }
 

@@ -13,13 +13,12 @@ namespace GameShop.UI.MVC.Controllers
     [Authorize(Roles = "Admin")]
     public class ProductCategoriesController : Controller
     {
-        private GameShopEntities db = new GameShopEntities();
+        UnitOfWork uow = new UnitOfWork();
 
         // GET: ProductCategories
         public ActionResult Index()
         {
-            var productCategories = db.ProductCategories.Include(p => p.Category).Include(p => p.Product);
-            return View(productCategories.ToList());
+            return View(uow.ProductCategoryRepository.Get());
         }
 
         // GET: ProductCategories/Details/5
@@ -29,7 +28,7 @@ namespace GameShop.UI.MVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ProductCategory productCategory = db.ProductCategories.Find(id);
+            ProductCategory productCategory = uow.ProductCategoryRepository.Find(id);
             if (productCategory == null)
             {
                 return HttpNotFound();
@@ -40,8 +39,8 @@ namespace GameShop.UI.MVC.Controllers
         // GET: ProductCategories/Create
         public ActionResult Create()
         {
-            ViewBag.CategoryID = new SelectList(db.Categories, "CategoryID", "CategoryName");
-            ViewBag.ProductID = new SelectList(db.Products, "ProductID", "ProductName");
+            ViewBag.CategoryID = new SelectList(uow.CategoryRepository.Get(), "CategoryID", "CategoryName");
+            ViewBag.ProductID = new SelectList(uow.ProductRepository.Get(), "ProductID", "ProductName");
             return View();
         }
 
@@ -54,13 +53,13 @@ namespace GameShop.UI.MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.ProductCategories.Add(productCategory);
-                db.SaveChanges();
+                uow.ProductCategoryRepository.Add(productCategory);
+                uow.Save();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.CategoryID = new SelectList(db.Categories, "CategoryID", "CategoryName", productCategory.CategoryID);
-            ViewBag.ProductID = new SelectList(db.Products, "ProductID", "ProductName", productCategory.ProductID);
+            ViewBag.CategoryID = new SelectList(uow.CategoryRepository.Get(), "CategoryID", "CategoryName", productCategory.CategoryID);
+            ViewBag.ProductID = new SelectList(uow.ProductRepository.Get(), "ProductID", "ProductName", productCategory.ProductID);
             return View(productCategory);
         }
 
@@ -71,13 +70,13 @@ namespace GameShop.UI.MVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ProductCategory productCategory = db.ProductCategories.Find(id);
+            ProductCategory productCategory = uow.ProductCategoryRepository.Find(id);
             if (productCategory == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.CategoryID = new SelectList(db.Categories, "CategoryID", "CategoryName", productCategory.CategoryID);
-            ViewBag.ProductID = new SelectList(db.Products, "ProductID", "ProductName", productCategory.ProductID);
+            ViewBag.CategoryID = new SelectList(uow.CategoryRepository.Get(), "CategoryID", "CategoryName", productCategory.CategoryID);
+            ViewBag.ProductID = new SelectList(uow.ProductRepository.Get(), "ProductID", "ProductName", productCategory.ProductID);
             return View(productCategory);
         }
 
@@ -90,12 +89,12 @@ namespace GameShop.UI.MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(productCategory).State = EntityState.Modified;
-                db.SaveChanges();
+                uow.ProductCategoryRepository.Update(productCategory);
+                uow.Save();
                 return RedirectToAction("Index");
             }
-            ViewBag.CategoryID = new SelectList(db.Categories, "CategoryID", "CategoryName", productCategory.CategoryID);
-            ViewBag.ProductID = new SelectList(db.Products, "ProductID", "ProductName", productCategory.ProductID);
+            ViewBag.CategoryID = new SelectList(uow.CategoryRepository.Get(), "CategoryID", "CategoryName", productCategory.CategoryID);
+            ViewBag.ProductID = new SelectList(uow.ProductRepository.Get(), "ProductID", "ProductName", productCategory.ProductID);
             return View(productCategory);
         }
 
@@ -106,7 +105,7 @@ namespace GameShop.UI.MVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ProductCategory productCategory = db.ProductCategories.Find(id);
+            ProductCategory productCategory = uow.ProductCategoryRepository.Find(id);
             if (productCategory == null)
             {
                 return HttpNotFound();
@@ -119,19 +118,10 @@ namespace GameShop.UI.MVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            ProductCategory productCategory = db.ProductCategories.Find(id);
-            db.ProductCategories.Remove(productCategory);
-            db.SaveChanges();
+            uow.ProductCategoryRepository.Remove(id);
+            uow.Save();
             return RedirectToAction("Index");
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
     }
 }

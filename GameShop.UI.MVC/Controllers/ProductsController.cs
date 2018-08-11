@@ -7,18 +7,21 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using GameShop.DATA.EF;
+using System.IO;
+using System.Drawing;
+using GameShop.UI.MVC.Utilities;
 
 namespace GameShop.UI.MVC.Controllers
 {
-    [Authorize(Roles = "Admin")]
+ 
     public class ProductsController : Controller
     {
-        private GameShopEntities db = new GameShopEntities();
+        UnitOfWork uow = new UnitOfWork();
 
         // GET: Products
         public ActionResult Index()
         {
-            var products = db.Products.Include(p => p.ProductStatus);
+            var products = uow.ProductRepository.Get(includeProperties: "ProductStatus");
             return View(products.ToList());
         }
 
@@ -29,7 +32,7 @@ namespace GameShop.UI.MVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.Products.Find(id);
+            Product product = uow.ProductRepository.Find(id);
             if (product == null)
             {
                 return HttpNotFound();
@@ -38,9 +41,10 @@ namespace GameShop.UI.MVC.Controllers
         }
 
         // GET: Products/Create
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
-            ViewBag.ProductStatusID = new SelectList(db.ProductStatuses, "ProductStatusID", "StatusName");
+            ViewBag.ProductStatusID = new SelectList(uow.ProductStatusRepository.Get(), "ProductStatusID", "StatusName");
             return View();
         }
 
@@ -48,33 +52,69 @@ namespace GameShop.UI.MVC.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ProductID,ProductName,ProductDescription,Price,UnitsInStock,ProductImage,ProductStatusID,IsActive")] Product product)
+        public ActionResult Create([Bind(Include = "ProductID,ProductName,ProductDescription,Price,UnitsInStock,ProductImage,ProductStatusID,IsActive")] Product product, HttpPostedFileBase ProductImage)
         {
             if (ModelState.IsValid)
             {
-                db.Products.Add(product);
-                db.SaveChanges();
+                string imageName = "";
+
+                if (ProductImage != null)
+                {
+                    string imgExt = Path.GetExtension(ProductImage.FileName).ToLower();
+                    string[] allowedExtensions = { ".png", ".jpg", ".jpeg", ".gif" };
+
+                    if (allowedExtensions.Contains(imgExt))
+                    {
+                        // We can save the image under numerous file names.
+                        // To save with the original uploaded image name:
+                        imageName = Path.GetFileName(ProductImage.FileName);
+
+                        // To save with a timestamp and original file name:
+                        // imageName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "_" + Path.GetFileName(BookImage.FileName);
+
+                        // To save with a GUID as the file name:
+                        // imageName = Guid.NewGuid().ToString() + imgExt;
+
+                        // Set the path on the server to where the image is to be stored
+                        string savePath = Server.MapPath("~/Content/assets/images/products/");
+
+                        // This code will upload the image but will not resize or create a thumbnail of the image so we are going
+                        // to use a different method to manipulate the images
+                        //FileUtilities.UploadFile(savePath, imageName, BookImage);
+
+                        // Convert HttpPostedFileBase to Image type
+                        Image convertedImage = Image.FromStream(ProductImage.InputStream);
+
+                        // We are going to resize the images to 500px and make thumbnails that are 100px
+                        FileUtilities.ResizeImage(savePath, imageName, convertedImage, 500, 100);
+                    }
+                }
+                product.ProductImage = imageName;
+                uow.ProductRepository.Add(product);
+                uow.Save();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.ProductStatusID = new SelectList(db.ProductStatuses, "ProductStatusID", "StatusName", product.ProductStatusID);
+            ViewBag.ProductStatusID = new SelectList(uow.ProductStatusRepository.Get(), "ProductStatusID", "StatusName", product.ProductStatusID);
             return View(product);
         }
 
         // GET: Products/Edit/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.Products.Find(id);
+            Product product = uow.ProductRepository.Find(id);
             if (product == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.ProductStatusID = new SelectList(db.ProductStatuses, "ProductStatusID", "StatusName", product.ProductStatusID);
+            ViewBag.ProductStatusID = new SelectList(uow.ProductStatusRepository.Get(), "ProductStatusID", "StatusName", product.ProductStatusID);
             return View(product);
         }
 
@@ -82,27 +122,29 @@ namespace GameShop.UI.MVC.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "ProductID,ProductName,ProductDescription,Price,UnitsInStock,ProductImage,ProductStatusID,IsActive")] Product product)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(product).State = EntityState.Modified;
-                db.SaveChanges();
+                uow.ProductRepository.Update(product);
+                uow.Save();
                 return RedirectToAction("Index");
             }
-            ViewBag.ProductStatusID = new SelectList(db.ProductStatuses, "ProductStatusID", "StatusName", product.ProductStatusID);
+            ViewBag.ProductStatusID = new SelectList(uow.ProductStatusRepository.Get(), "ProductStatusID", "StatusName", product.ProductStatusID);
             return View(product);
         }
 
         // GET: Products/Delete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.Products.Find(id);
+            Product product = uow.ProductRepository.Find(id);
             if (product == null)
             {
                 return HttpNotFound();
@@ -111,23 +153,19 @@ namespace GameShop.UI.MVC.Controllers
         }
 
         // POST: Products/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Product product = db.Products.Find(id);
-            db.Products.Remove(product);
-            db.SaveChanges();
+            Product product = uow.ProductRepository.Find(id);
+            string savePath = Server.MapPath("~/Content/assets/products/");
+            FileUtilities.DeleteImage(savePath, product.ProductImage);
+
+            uow.ProductRepository.Remove(id);
+            uow.Save();
             return RedirectToAction("Index");
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
     }
 }

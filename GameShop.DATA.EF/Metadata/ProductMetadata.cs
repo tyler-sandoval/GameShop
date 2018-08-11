@@ -12,12 +12,11 @@ namespace GameShop.DATA.EF//.Metadata
         [Required(ErrorMessage = "* Required")]
         [StringLength(150, ErrorMessage = "* Product name cannot exceed 150 characters.")]
         [Display(Name = "Product")]
-        [DisplayFormat(ApplyFormatInEditMode = true)]
         public string ProductName { get; set; }
 
         [Display(Name = "Description")]
         [UIHint("MultilineText")]
-        [DisplayFormat(NullDisplayText = "N/A", ApplyFormatInEditMode = true)]
+        [DisplayFormat(NullDisplayText = "N/A")]
         public string ProductDescription { get; set; }
 
         [DisplayFormat(NullDisplayText = "N/A", DataFormatString = "{0:c}", ApplyFormatInEditMode = true)]
@@ -28,16 +27,14 @@ namespace GameShop.DATA.EF//.Metadata
         public Nullable<short> UnitsInStock { get; set; }
 
         [Display(Name = "Image")]
-        [DisplayFormat(NullDisplayText = "Image currently not available", ApplyFormatInEditMode = true)]
+        [DisplayFormat(NullDisplayText = "Image currently not available")]
         public string ProductImage { get; set; }
 
         [Display(Name = "Product Status ID")]
         [Required(ErrorMessage = "* Required")]
-        [DisplayFormat(ApplyFormatInEditMode = true)]
         public byte ProductStatusID { get; set; }
 
         [Display(Name = "Is Active?")]
-        [DisplayFormat(ApplyFormatInEditMode = true)]
         [Required(ErrorMessage = "* Required")]
         public bool IsActive { get; set; }
 

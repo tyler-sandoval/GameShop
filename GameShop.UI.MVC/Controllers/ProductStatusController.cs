@@ -13,12 +13,12 @@ namespace GameShop.UI.MVC.Controllers
     [Authorize(Roles = "Admin")]
     public class ProductStatusController : Controller
     {
-        private GameShopEntities db = new GameShopEntities();
+        UnitOfWork uow = new UnitOfWork();
 
         // GET: ProductStatus
         public ActionResult Index()
         {
-            return View(db.ProductStatuses.ToList());
+            return View(uow.ProductStatusRepository.Get());
         }
 
         // GET: ProductStatus/Details/5
@@ -28,7 +28,7 @@ namespace GameShop.UI.MVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ProductStatus productStatus = db.ProductStatuses.Find(id);
+            ProductStatus productStatus = uow.ProductStatusRepository.Find(id);
             if (productStatus == null)
             {
                 return HttpNotFound();
@@ -51,8 +51,8 @@ namespace GameShop.UI.MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.ProductStatuses.Add(productStatus);
-                db.SaveChanges();
+                uow.ProductStatusRepository.Add(productStatus);
+                uow.Save();
                 return RedirectToAction("Index");
             }
 
@@ -66,7 +66,7 @@ namespace GameShop.UI.MVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ProductStatus productStatus = db.ProductStatuses.Find(id);
+            ProductStatus productStatus = uow.ProductStatusRepository.Find(id);
             if (productStatus == null)
             {
                 return HttpNotFound();
@@ -83,8 +83,8 @@ namespace GameShop.UI.MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(productStatus).State = EntityState.Modified;
-                db.SaveChanges();
+                uow.ProductStatusRepository.Update(productStatus);
+                uow.Save();
                 return RedirectToAction("Index");
             }
             return View(productStatus);
@@ -97,7 +97,7 @@ namespace GameShop.UI.MVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ProductStatus productStatus = db.ProductStatuses.Find(id);
+            ProductStatus productStatus = uow.ProductStatusRepository.Find(id);
             if (productStatus == null)
             {
                 return HttpNotFound();
@@ -110,19 +110,10 @@ namespace GameShop.UI.MVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(byte id)
         {
-            ProductStatus productStatus = db.ProductStatuses.Find(id);
-            db.ProductStatuses.Remove(productStatus);
-            db.SaveChanges();
+            uow.ProductStatusRepository.Remove(id);
+            uow.Save();
             return RedirectToAction("Index");
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
     }
 }

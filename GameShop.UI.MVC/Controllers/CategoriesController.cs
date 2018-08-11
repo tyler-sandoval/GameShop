@@ -10,15 +10,18 @@ using GameShop.DATA.EF;
 
 namespace GameShop.UI.MVC.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class CategoriesController : Controller
     {
-        private GameShopEntities db = new GameShopEntities();
+        UnitOfWork uow = new UnitOfWork();
 
         // GET: Categories
         public ActionResult Index()
         {
-            return View(db.Categories.ToList());
+            //return View(db.Categories.ToList());
+
+            var categories = uow.CategoryRepository.Get(includeProperties: "ProductCategories");
+            return View(categories.ToList());
         }
 
         // GET: Categories/Details/5
@@ -28,7 +31,7 @@ namespace GameShop.UI.MVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Category category = db.Categories.Find(id);
+            Category category = uow.CategoryRepository.Find(id);
             if (category == null)
             {
                 return HttpNotFound();
@@ -51,8 +54,8 @@ namespace GameShop.UI.MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Categories.Add(category);
-                db.SaveChanges();
+                uow.CategoryRepository.Add(category);
+                uow.Save();
                 return RedirectToAction("Index");
             }
 
@@ -66,7 +69,7 @@ namespace GameShop.UI.MVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Category category = db.Categories.Find(id);
+            Category category = uow.CategoryRepository.Find(id);
             if (category == null)
             {
                 return HttpNotFound();
@@ -83,8 +86,8 @@ namespace GameShop.UI.MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(category).State = EntityState.Modified;
-                db.SaveChanges();
+                uow.CategoryRepository.Update(category);
+                uow.Save();
                 return RedirectToAction("Index");
             }
             return View(category);
@@ -97,7 +100,7 @@ namespace GameShop.UI.MVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Category category = db.Categories.Find(id);
+            Category category = uow.CategoryRepository.Find(id);
             if (category == null)
             {
                 return HttpNotFound();
@@ -110,19 +113,11 @@ namespace GameShop.UI.MVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Category category = db.Categories.Find(id);
-            db.Categories.Remove(category);
-            db.SaveChanges();
+            Category category = uow.CategoryRepository.Find(id);
+            uow.CategoryRepository.Remove(category);
+            uow.Save();
             return RedirectToAction("Index");
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
     }
 }
