@@ -19,19 +19,20 @@ namespace GameShop.DATA.EF//.Metadata
         [DisplayFormat(NullDisplayText = "N/A")]
         public string ProductDescription { get; set; }
 
-        [DisplayFormat(NullDisplayText = "N/A", DataFormatString = "{0:c}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(NullDisplayText = "N/A", DataFormatString = "{0:c}")]
         public Nullable<decimal> Price { get; set; }
 
         [Display(Name = "Units In Stock")]
-        [DisplayFormat(NullDisplayText = "N/A", DataFormatString = "{0:n0}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(NullDisplayText = "N/A", DataFormatString = "{0:n0}")]
         public Nullable<short> UnitsInStock { get; set; }
 
         [Display(Name = "Image")]
         [DisplayFormat(NullDisplayText = "Image currently not available")]
         public string ProductImage { get; set; }
 
-        [Display(Name = "Product Status ID")]
+        [Display(Name = "Product Status")]
         [Required(ErrorMessage = "* Required")]
+        [DisplayFormat(ApplyFormatInEditMode = true)]
         public byte ProductStatusID { get; set; }
 
         [Display(Name = "Is Active?")]

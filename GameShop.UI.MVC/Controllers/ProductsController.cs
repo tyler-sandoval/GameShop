@@ -7,18 +7,20 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using GameShop.DATA.EF;
+using GameShop.DATA.EF.Repositories;
 using System.IO;
 using System.Drawing;
 using GameShop.UI.MVC.Utilities;
 
 namespace GameShop.UI.MVC.Controllers
 {
- 
+    [Authorize]
     public class ProductsController : Controller
     {
         UnitOfWork uow = new UnitOfWork();
 
         // GET: Products
+        [AllowAnonymous]
         public ActionResult Index()
         {
             var products = uow.ProductRepository.Get(includeProperties: "ProductStatus");
@@ -26,6 +28,7 @@ namespace GameShop.UI.MVC.Controllers
         }
 
         // GET: Products/Details/5
+        [Authorize(Roles = "Admin, User")]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -51,8 +54,8 @@ namespace GameShop.UI.MVC.Controllers
         // POST: Products/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
         [Authorize(Roles = "Admin")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "ProductID,ProductName,ProductDescription,Price,UnitsInStock,ProductImage,ProductStatusID,IsActive")] Product product, HttpPostedFileBase ProductImage)
         {
@@ -121,13 +124,47 @@ namespace GameShop.UI.MVC.Controllers
         // POST: Products/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
         [Authorize(Roles = "Admin")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ProductID,ProductName,ProductDescription,Price,UnitsInStock,ProductImage,ProductStatusID,IsActive")] Product product)
+        public ActionResult Edit([Bind(Include = "ProductID,ProductName,ProductDescription,Price,UnitsInStock,ProductImage,ProductStatusID,IsActive")] Product product, HttpPostedFileBase ProductImage)
         {
             if (ModelState.IsValid)
             {
+                string imageName = "";
+
+                if (ProductImage != null)
+                {
+                    string imgExt = Path.GetExtension(ProductImage.FileName).ToLower();
+                    string[] allowedExtensions = { ".png", ".jpg", ".jpeg", ".gif" };
+
+                    if (allowedExtensions.Contains(imgExt))
+                    {
+                        // We can save the image under numerous file names.
+                        // To save with the original uploaded image name:
+                        imageName = Path.GetFileName(ProductImage.FileName);
+
+                        // To save with a timestamp and original file name:
+                        // imageName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "_" + Path.GetFileName(BookImage.FileName);
+
+                        // To save with a GUID as the file name:
+                        // imageName = Guid.NewGuid().ToString() + imgExt;
+
+                        // Set the path on the server to where the image is to be stored
+                        string savePath = Server.MapPath("~/Content/assets/images/products/");
+
+                        // This code will upload the image but will not resize or create a thumbnail of the image so we are going
+                        // to use a different method to manipulate the images
+                        //FileUtilities.UploadFile(savePath, imageName, BookImage);
+
+                        // Convert HttpPostedFileBase to Image type
+                        Image convertedImage = Image.FromStream(ProductImage.InputStream);
+
+                        // We are going to resize the images to 500px and make thumbnails that are 100px
+                        FileUtilities.ResizeImage(savePath, imageName, convertedImage, 500, 100);
+                    }
+                }
+                product.ProductImage = imageName;
                 uow.ProductRepository.Update(product);
                 uow.Save();
                 return RedirectToAction("Index");

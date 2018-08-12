@@ -196,6 +196,7 @@
     <Content Include="App_Data\GameShopDeploymentScript.sql" />
     <Content Include="App_Data\GameShopwIdentityDBScriptBackup.sql" />
     <Content Include="Content\assets\css\bootstrap.min.css" />
+    <Content Include="Content\assets\css\custom.css" />
     <Content Include="Content\assets\css\ionicons.css" />
     <Content Include="Content\assets\css\magnific-popup.css" />
     <Content Include="Content\assets\css\main.css" />
@@ -242,6 +243,7 @@
     <Content Include="Content\assets\images\widget-big-3.png" />
     <Content Include="Content\assets\images\widget-big-4.png" />
     <Content Include="Content\assets\js\bootstrap.min.js" />
+    <Content Include="Content\assets\js\cart.js" />
     <Content Include="Content\assets\js\jquery-1.12.3.min.js" />
     <Content Include="Content\assets\js\jquery.magnific-popup.min.js" />
     <Content Include="Content\assets\js\owl.carousel.min.js" />
