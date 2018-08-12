@@ -1,10 +1,10 @@
 ﻿@model GameShop.DATA.EF.Product
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Details On " + Model.ProductName;
 }
 
-<h2>Details</h2>
+<h2>@ViewBag.Title</h2>
 
 <div>
     <h4>Product</h4>

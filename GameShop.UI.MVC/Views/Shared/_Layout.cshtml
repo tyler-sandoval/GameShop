@@ -7,11 +7,12 @@
     <title>@ViewBag.Title</title>
     <!-- CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.css" rel="stylesheet" />
-    <link href="https://code.jquery.com/ui/1.12.0/themes/ui-trontastic/jquery-ui.css" rel="stylesheet" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
     <!-- google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,500,700' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Oswald:400,300,700' rel='stylesheet' type='text/css'>
     <!-- files -->
+    <link href="https://code.jquery.com/ui/1.12.0/themes/ui-darkness/jquery-ui.css" rel="stylesheet" />
     <link href="~/Content/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="~/Content/assets/css/magnific-popup.css" rel="stylesheet">
     <link href="~/Content/assets/css/owl.carousel.css" rel="stylesheet">
@@ -22,6 +23,9 @@
     <link href="~/Content/assets/css/custom.css" rel="stylesheet" />
         <!-- Datatables CSS -->
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="~/Content/assets/images/gshopfavicon.ico">
 
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -34,10 +38,13 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-6">
-                    <a href="index.html"><img src="/Content/assets/images/logo.png" alt="logo"></a>
+                    <a href="@Url.Action("Index", "Home")"><img src="/Content/assets/images/logo.png" alt="logo"></a>
                 </div>
                 <div class="col-sm-3 col-sm-offset-3 text-right">
-                    <span class="ion-android-cart"></span> 0 products
+                    <span class="ion-android-cart" id="cart-button">
+                        Cart
+                        <span id="cart-notification" class="notification-counter"></span>
+                    </span>
                     <form>
                         <div class="input-group">
                             <input type="text" class="form-control" placeholder="">
@@ -92,28 +99,60 @@
         </div>
     </div>
     <!-- Footer -->
-    <section id="footer-widget" class="footer-widget">
+    @*<section id="footer-widget" class="footer-widget">
         <div class="container header-bg">
+
         </div>
-    </section>
+    </section>*@
     <footer class="footer text-center">
         <h3>&copy; Theme by <a href="https://themewagon.com/">Themewagon</a></h3>
+        <div>Logo made with <a href="https://www.designevo.com/en/" title="Free Online Logo Maker">DesignEvo</a></div>
     </footer>
+
+    <div id="dialog" title="Shopping Cart">
+        <p id="cart-contents">Your Cart is Currently Empty</p>
+    </div>
+
+
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
-    <script src="assets/js/jquery-1.12.3.min.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
-    <script src="assets/js/jquery.magnific-popup.min.js"></script>
-    <script src="assets/js/owl.carousel.min.js"></script>
-    <script src="assets/js/script.js"></script>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+    <script src="~/Content/assets/js/cart.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
     @RenderSection("scripts", false)
 
-    <script type="text/javascript" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
     <script>
+        $(function () {
+            $('#dialog').dialog({
+                autoOpen: false,
+                show: {
+                    effect: "fade",
+                    duration: 1000
+                },
+                hide: {
+                    effect: "explode",
+                    duration: 1000
+                }
+            });
+            //other effects that you can use include: blind, bounce, clip, drop,
+            //fold, puff, pulsate, scale, shake, and slide
+
+            $('#cart-button').on('click', function () {
+                $('#dialog').dialog('open');
+            });
+
+        });
+    </script>
+
+    <!-- commented out below to move into specific view(s) that use DataTables-->
+    @*<script>
     $(document).ready(function () {
         $('table.data-table').DataTable();
     });
-    </script>
+    </script>*@
 </body>
 </html>

@@ -89,7 +89,6 @@ var cart = [];
 
 // Function to add items to the cart - Wired up to <a> and <button> in the HTML
 function addToCart(id) {
-    console.log(games[id - 1]);
     var gameObj = games[id - 1];
 
     // If they have already added the book update the qty
@@ -99,7 +98,7 @@ function addToCart(id) {
         cart.push(gameObj);
     }
     else {
-        gameObj.qty++;
+        gameObj.qty = gameObj.qty + 1;
     }
 
     //for testing purposes
@@ -120,7 +119,7 @@ function addToCart(id) {
     document.getElementById('cart-notification').innerHTML = cartQty;
 
     //Update the contents of the dialog
-    document.getElementById('cart-content').innerHTML = getCartContents();
+    document.getElementById('cart-contents').innerHTML = getCartContents();
 }
 
 // Function to loop through cart and build a string containing book information
@@ -132,7 +131,7 @@ function getCartContents() {
     // to cartContent string
 
     for (var i = 0; i < cart.length; i++) {
-        cartContent += cart[i].title + "<br>by " + cart[i].author + "<br>Qty: " + cart[i].qty + " at $" + cart[i].price + "<br><br>";
+        cartContent += cart[i].title + "<br>by " + cart[i].producer + "<br>Qty: " + cart[i].qty + " at $" + cart[i].price + "<br><br>";
         cartTotal += (cart[i].qty * cart[i].price);
     }
 

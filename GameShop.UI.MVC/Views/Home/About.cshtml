@@ -1,12 +1,44 @@
 ﻿@{
-    ViewBag.Title = "About";
+    ViewBag.Title = "FAQ";
 }
-<hgroup>
-    <h2>@ViewBag.Title.</h2>
-    <h3>@ViewBag.Message</h3>
-</hgroup>
-<div class="row-fluid">
-    <div class="span12">
-        <p>Use this area to provide additional information.</p>
+
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 padding-right">
+                <h2 class="title text-center"><span>F</span>requently <span>A</span>sked <span>Q</span>uestions</h2>
+                <div id="accordion">
+                    <h3>Refund and Return Policies</h3>
+                    <div>
+                        <p> If you're not satisfied with your purchase, you may return it for a refund. We will issue a refund to your original form of payment for items returned within 14 days. </p>
+                    </div>
+                    <h3>Who can I contact if I am having problems with my account?</h3>
+                    <div>
+                        <p> Please visit our <a href="contact.html">contact</a> page for contact information or to send us an email. </p>
+                    </div>
+                    <h3>Where is Centriq GameShop headquarters?</h3>
+                    <div>
+                        <p> Our headquarters is located at 8700 Stateline Road in Leawood, KS. </p>
+                    </div>
+                    <h3>What types of books do you offer</h3>
+                    <div>
+                        <p> We offer the following kinds of books </p>
+                        <ul>
+                            <li>Hardcover</li>
+                            <li>Softcover</li>
+                            <li>eBooks</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
+</section>
+
+@section scripts {
+    <script>
+        $(function () {
+            $('#accordion').accordion();
+        });
+    </script>
+}

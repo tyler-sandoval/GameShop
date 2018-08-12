@@ -1,13 +1,12 @@
 ﻿@model GameShop.DATA.EF.Category
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Details About " + Model.CategoryName;
 }
 
-<h2>Details</h2>
+<h2>@ViewBag.Title</h2>
 
 <div>
-    <h4>Category</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
